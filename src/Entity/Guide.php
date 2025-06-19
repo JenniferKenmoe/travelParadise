@@ -39,6 +39,18 @@ class Guide
 
     #[ORM\Column(type: 'boolean')]
     private ?bool $isActive = null;
+
+    public function isIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
+        return $this;
+    }
+
     
     #[ORM\ManyToOne(targetEntity: Country::class)]
     private ?Country $country = null;
@@ -121,17 +133,6 @@ class Guide
         return $this;
     }
 
-    public function isIsActive(): ?bool
-    {
-        return $this->isActive;
-    }
-
-    public function setIsActive(bool $isActive): self
-    {
-        $this->isActive = $isActive;
-        return $this;
-    }
-
     
     // Getter pour country
     public function getCountry(): ?Country
@@ -144,6 +145,11 @@ class Guide
     {
         $this->country = $country;
         return $this;
+    }
+    
+    public function __toString(): string
+    {
+        return $this->firstName . ' ' . $this->lastName;
     }
 
 }

@@ -1,0 +1,23 @@
+{
+  "name": "travelparadiseadmin",
+  "version": "1.0.0",
+  "repository": "git@github.com:HaroldBrian/TravelParadiseAdmin.git",
+  "author": "HaroldBrian <89621396+HaroldBrian@users.noreply.github.com>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@symfony/stimulus-bridge": "1.0.1",
+    "@symfony/webpack-encore": "^1.0.0",
+    "core-js": "^3.6.5",
+    "regenerator-runtime": "^0.13.7",
+    "stimulus": "^3.2.2",
+    "webpack-notifier": "^1.13.0",
+    "@symfony/ux-chartjs": "file:vendor/symfony/ux-chartjs/assets"
+  },
+  "scripts": {
+    "dev": "encore dev --watch",
+    "build": "encore production --progress",
+    "start": "encore dev-server",
+    "watch": "encore dev --watch"
+  }
+}

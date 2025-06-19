@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
@@ -25,11 +26,10 @@ class GuideCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         $fields = [
-            AssociationField::new('country'),
+            AssociationField::new('country', "Pays"),
             TextField::new('lastName', 'Nom'),
             TextField::new('firstName', 'Prénom'),
-            TextField::new('email', 'Email'),
-            
+            EmailField::new('email', 'Email'),
 
             BooleanField::new('isActive', 'Actif')
                 ->renderAsSwitch(false)

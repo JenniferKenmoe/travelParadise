@@ -1,0 +1,57 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content %}
+<style>
+.stat-card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: box-shadow 0.2s;
+    cursor: pointer;
+}
+.stat-card:hover {
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    background: #f8f9fa;
+    text-decoration: none;
+}
+.stat-icon {
+    font-size: 40px;
+    color: #007bff;
+}
+.stat-value {
+    font-size: 24px;
+    font-weight: bold;
+}
+a.stat-link { color: inherit; text-decoration: none; }
+</style>
+
+
+<div class="row">
+    <div class="col-12 mb-4">
+        <h1>Tableau de bord</h1>
+    </div>
+    {% for item in data %}
+        {% set key = (item|keys)|first %}
+        <div class="col-md-4 mb-4">
+            <a href="{{ path('admin', {crudControllerFqcn: item.crudControllerFqcn|replace({'\\':'\\\\'})}) }}" class="stat-link">
+                <div class="stat-card bg-light">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="{{ item.icon }} stat-icon"></i>
+                        </div>
+                        <div>
+                            <div class="stat-value">{{ attribute(item, key) }}</div>
+                            <div class="text-muted">{{ item.label }}</div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    {% endfor %}
+</div>
+<div class="row mt-5">
+    <div class="col-12">
+        {{ render_chart(chart) }}
+    </div>
+</div>
+{% endblock %}
