@@ -2,8 +2,12 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        <title>{% block title %}TravelParadise{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" />
         {% block stylesheets %}
         {% endblock %}
 
@@ -11,7 +15,48 @@
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
-    <body>
+    <body class="bg-light">
+        <nav class="navbar navbar-expand-lg py-3 navbar-light bg-primary-darker" style="background-color: #fff;">
+          <div class="container">
+            <a class="navbar-brand" href="{{ path('app_home') }}" aria-label="Accueil">
+                <strong>
+                    <span style="font-size: 1.5rem">
+                    <img src="{{ asset('assets/img/logo.png') }}" alt="Logo" class="d-inline-block align-text-top rounded-circle" style="width: 50px; height: 50px;">
+                  <span style="color: rgb(162, 161, 255)">Travel</span>
+                  <span style="color: rgb(255, 98, 98)">.</span>
+                  <span style="color: rgb(88, 42, 255)">Paradise</span>
+                </span>
+              </strong>
+            </a>
+            <button aria-controls="myNavbar2" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#myNavbar2" data-bs-toggle="collapse" type="button">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="myNavbar2">
+              <div class="ms-5">
+                <ul class="navbar-nav" id="menu-menu-1">
+                  <li class="nav-item"> <a class="nav-link" href="#home">Accueil</a> </li>
+                  <li class="nav-item"> <a class="nav-link" href="#about">À propos</a> </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"> Services </a>
+                    <ul class="dropdown-menu">
+                      <li> <a class="dropdown-item" href="#">Installation & Configuration Serveur</a> </li>
+                      <li> <a class="dropdown-item" href="#">Virtualisation</a> </li>
+                      <li> <a class="dropdown-item" href="#">Déploiement Logiciel</a> </li>
+                      <li> <a class="dropdown-item" href="#">Solutions IA</a> </li>
+                      <li> <a class="dropdown-item" href="#">Protection des Données</a> </li>
+                      <li> <a class="dropdown-item" href="#">Réseaux</a> </li>
+                    </ul>
+                  </li>
+                  <li class="nav-item"> <a class="nav-link" href="#market">Secteurs</a> </li>
+                  <li class="nav-item"> <a class="nav-link" href="#cases">Réalisations</a> </li>
+                  <li class="nav-item"> <a class="nav-link" href="#blog">Blog</a> </li>
+                  <li class="nav-item"> <a class="nav-link" href="#contact">Contact</a> </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </nav>
         {% block body %}{% endblock %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
