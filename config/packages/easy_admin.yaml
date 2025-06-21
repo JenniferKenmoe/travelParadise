@@ -1,0 +1,5 @@
+easy_admin:
+  design:
+    assets:
+      css:
+        - "build/easyadmin-custom.css"

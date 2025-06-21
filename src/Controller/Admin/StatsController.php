@@ -6,27 +6,34 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
 use Symfony\UX\Chartjs\Model\Chart;
+use App\Repository\VisiteRepository;
+use App\Repository\VisitorParticipationRepository;
 
 class StatsController extends AbstractController
 {
     #[Route('/admin/stats', name: 'admin_stats')]
-    public function index(ChartBuilderInterface $chartBuilder): Response
+    public function index(VisiteRepository $visiteRepo, VisitorParticipationRepository $vpRepo): Response
     {
-        // nombre de visiteurs par visite
-        $data = [
-            'labels' => ['Visite 1', 'Visite 2', 'Visite 3'],
-            'datasets' => [[
-                'label' => 'Nombre de visiteurs',
-                'backgroundColor' => 'rgb(54, 162, 235)',
-                'data' => [12, 19, 3],
-            ]],
-        ];
-
-        $chart = $chartBuilder->createChart(Chart::TYPE_BAR);
-        $chart->setData($data);
+        // 1. Nombre de visites par mois
+        $visitesParMois = $visiteRepo->countByMonth();
+        // 2. Nombre de visites par mois et par guide
+        $visitesParMoisGuide = $visiteRepo->countByMonthAndGuide();
+        // 3. Taux de présence des touristes par mois
+        $tauxPresenceMois = $vpRepo->presenceRateByMonth();
+        // 4. Stats par guide
+        $parGuide = $visiteRepo->countByGuide();
+        // 5. Stats par pays
+        $parPays = $visiteRepo->countByCountry();
+        // 6. Stats par visite (nombre de visiteurs)
+        $parVisite = $visiteRepo->countByVisite();
 
         return $this->render('admin/page/stats.html.twig', [
-            'chart' => $chart,
+            'visitesParMois' => $visitesParMois,
+            'visitesParMoisGuide' => $visitesParMoisGuide,
+            'tauxPresenceMois' => $tauxPresenceMois,
+            'parGuide' => $parGuide,
+            'parPays' => $parPays,
+            'parVisite' => $parVisite,
         ]);
     }
 }

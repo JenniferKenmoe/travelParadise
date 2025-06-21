@@ -14,9 +14,20 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Vich\UploaderBundle\Form\Type\VichImageType;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 
 class GuideCrudController extends AbstractCrudController
 {
+    private UserPasswordHasherInterface $passwordHasher;
+
+    public function __construct(UserPasswordHasherInterface $passwordHasher)
+    {
+        $this->passwordHasher = $passwordHasher;
+    }
+
     public static function getEntityFqcn(): string
     {
         return Guide::class;
@@ -54,11 +65,28 @@ class GuideCrudController extends AbstractCrudController
             ->onlyOnForms()
             ->setFormType(PasswordType::class)
             ->setRequired($pageName === 'new')
-            ->setFormTypeOption('mapped', false)
             ->setFormTypeOption('attr', ['autocomplete' => 'new-password', 'value' => '']);
 
         $fields[] = $passwordField;
 
         return $fields;
+    }
+
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof Guide && $entityInstance->getPlainPassword()) {
+            $hashed = $this->passwordHasher->hashPassword($entityInstance, $entityInstance->getPlainPassword());
+            $entityInstance->setPassword($hashed);
+        }
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof Guide && $entityInstance->getPlainPassword()) {
+            $hashed = $this->passwordHasher->hashPassword($entityInstance, $entityInstance->getPlainPassword());
+            $entityInstance->setPassword($hashed);
+        }
+        parent::updateEntity($entityManager, $entityInstance);
     }
 }

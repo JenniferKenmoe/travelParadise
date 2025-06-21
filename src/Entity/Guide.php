@@ -7,11 +7,13 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: GuideRepository::class)]
 
 #[Vich\Uploadable]
-class Guide
+class Guide implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -35,6 +37,8 @@ class Guide
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
+
+    private ?string $plainPassword = null;
 
 
     #[ORM\Column(type: 'boolean')]
@@ -133,6 +137,16 @@ class Guide
         return $this;
     }
 
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+        return $this;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
     
     // Getter pour country
     public function getCountry(): ?Country
@@ -152,4 +166,25 @@ class Guide
         return $this->firstName . ' ' . $this->lastName;
     }
 
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    public function getRoles(): array
+    {
+        // Les guides n'ont pas de rôles particuliers
+        return ['ROLE_GUIDE'];
+    }
+
+    public function eraseCredentials(): void
+    {
+        // Si vous stockez des données temporaires sensibles, nettoyez-les ici
+    }
+
+    // Pour compatibilité avec les anciennes versions de Symfony
+    public function getUsername(): string
+    {
+        return $this->getUserIdentifier();
+    }
 }

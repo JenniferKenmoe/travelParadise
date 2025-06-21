@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques Guide | TravelParadise{% endblock %}
+
+{% block body %}
+<div class="container py-4 mt-4">
+    <h2 class="mb-4 mt-4 text-center text-primary">Mes statistiques</h2>
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+            <h4 class="mb-3 text-success">Visites par mois</h4>
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Mois</th>
+                        <th>Nombre de visites</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mois, nb in statsMois %}
+                        <tr>
+                            <td>{{ mois }}</td>
+                            <td>{{ nb }}</td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="2" class="text-center text-muted">Aucune donnée</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h4 class="mb-3 mt-5 text-success">Visites par pays</h4>
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Pays</th>
+                        <th>Nombre de visites</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pays, nb in statsPays %}
+                        <tr>
+                            <td>{{ pays }}</td>
+                            <td>{{ nb }}</td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="2" class="text-center text-muted">Aucune donnée</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h4 class="mb-3 mt-5 text-success">Nombre de visiteurs par visite</h4>
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Visite</th>
+                        <th>Nombre de visiteurs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for v in parVisite %}
+                        <tr>
+                            <td>{{ v.placeToVisit }}</td>
+                            <td>{{ v.nb }}</td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="2" class="text-center text-muted">Aucune donnée</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        alertify.set('notifier','position', 'top-center');
+        alertify.set('notifier','delay', 12);
+        alertify.defaults.theme.ok = 'btn btn-success';
+        alertify.defaults.theme.cancel = 'btn btn-danger';
+        alertify.defaults.theme.input = 'form-control';
+        {% for message in app.flashes('success') %}
+            alertify.success('<i class="fa fa-check-circle me-2"></i>' + {{ message|json_encode|raw }}, 12, null, true);
+        {% endfor %}
+        {% for message in app.flashes('danger') %}
+            alertify.error('<i class="fa fa-exclamation-triangle me-2"></i>' + {{ message|json_encode|raw }}, 12, null, true);
+        {% endfor %}
+    });
+    </script>
+{% endblock %}

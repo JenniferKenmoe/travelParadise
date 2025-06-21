@@ -1,6 +1,85 @@
 {% extends '@EasyAdmin/page/content.html.twig' %}
 
 {% block content %}
-    <h1>Statistiques des visites</h1>
-    {{ render_chart(chart) }}
+<div class="row mb-5">
+        <h1 class="mb-4">Statistiques des visites</h1>
+        <div class="col-md-6 mb-4">
+            <h5>Nombre de visites par mois</h5>
+            <table class="table table-bordered table-striped">
+                <thead><tr><th>Mois</th><th>Nombre de visites</th></tr></thead>
+                <tbody>
+                {% for mois, nb in visitesParMois %}
+                    <tr><td>{{ mois }}</td><td>{{ nb }}</td></tr>
+                {% else %}
+                    <tr><td colspan="2" class="text-center text-muted">Aucune donnée</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6 mb-4">
+            <h5>Nombre de visites par mois et par guide</h5>
+            <table class="table table-bordered table-striped">
+                <thead><tr><th>Mois</th><th>Guide</th><th>Nombre de visites</th></tr></thead>
+                <tbody>
+                {% for row in visitesParMoisGuide %}
+                    <tr><td>{{ row.month }}</td><td>{{ row.guide }}</td><td>{{ row.nb }}</td></tr>
+                {% else %}
+                    <tr><td colspan="3" class="text-center text-muted">Aucune donnée</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6 mb-4">
+            <h5>Taux de présence des touristes par mois</h5>
+            <table class="table table-bordered table-striped">
+                <thead><tr><th>Mois</th><th>Taux de présence (%)</th></tr></thead>
+                <tbody>
+                {% for mois, taux in tauxPresenceMois %}
+                    <tr><td>{{ mois }}</td><td>{{ taux }}</td></tr>
+                {% else %}
+                    <tr><td colspan="2" class="text-center text-muted">Aucune donnée</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6 mb-4">
+            <h5>Répartition des visites par guide</h5>
+            <table class="table table-bordered table-striped">
+                <thead><tr><th>Guide</th><th>Nombre de visites</th></tr></thead>
+                <tbody>
+                {% for row in parGuide %}
+                    <tr><td>{{ row.guide }}</td><td>{{ row.nb }}</td></tr>
+                {% else %}
+                    <tr><td colspan="2" class="text-center text-muted">Aucune donnée</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6 mb-4">
+            <h5>Répartition des visites par pays</h5>
+            <table class="table table-bordered table-striped">
+                <thead><tr><th>Pays</th><th>Nombre de visites</th></tr></thead>
+                <tbody>
+                {% for pays, nb in parPays %}
+                    <tr><td>{{ pays }}</td><td>{{ nb }}</td></tr>
+                {% else %}
+                    <tr><td colspan="2" class="text-center text-muted">Aucune donnée</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6 mb-4">
+            <h5>Nombre de visiteurs par visite</h5>
+            <table class="table table-bordered table-striped">
+                <thead><tr><th>Visite</th><th>Nombre de visiteurs</th></tr></thead>
+                <tbody>
+                {% for row in parVisite %}
+                    <tr><td>{{ row.placeToVisit }}</td><td>{{ row.nb }}</td></tr>
+                {% else %}
+                    <tr><td colspan="2" class="text-center text-muted">Aucune donnée</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 {% endblock %}

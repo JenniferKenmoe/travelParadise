@@ -7,17 +7,24 @@
   "private": true,
   "dependencies": {
     "@symfony/stimulus-bridge": "1.0.1",
-    "@symfony/webpack-encore": "^1.0.0",
+    "@symfony/ux-chartjs": "file:vendor/symfony/ux-chartjs/assets",
+    "@symfony/webpack-encore": "^5.1.0",
     "core-js": "^3.6.5",
     "regenerator-runtime": "^0.13.7",
     "stimulus": "^3.2.2",
-    "webpack-notifier": "^1.13.0",
-    "@symfony/ux-chartjs": "file:vendor/symfony/ux-chartjs/assets"
+    "webpack-notifier": "^1.13.0"
   },
   "scripts": {
     "dev": "encore dev --watch",
     "build": "encore production --progress",
     "start": "encore dev-server",
     "watch": "encore dev --watch"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.27.4",
+    "@babel/preset-env": "^7.27.2",
+    "babel-loader": "^10.0.0",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1"
   }
 }

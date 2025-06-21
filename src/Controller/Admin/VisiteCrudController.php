@@ -53,7 +53,7 @@ class VisiteCrudController extends AbstractCrudController
                         $status = $entity->getStatusLabel();
                         $color = match ($entity->getStatus()) {
                             'en_cours' => 'green',
-                            'terminee' => 'red',
+                            'terminee' => 'blue',
                             default => 'gray'
                         };
                         return sprintf('<span style="color:%s;font-weight:bold;">%s</span>', $color, $status);

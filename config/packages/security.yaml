@@ -9,10 +9,33 @@ security:
       entity:
         class: App\Entity\User
         property: email
+    guide_provider:
+      entity:
+        class: App\Entity\Guide
+        property: email
   firewalls:
     dev:
       pattern: ^/(_(profiler|wdt)|css|images|js)/
       security: false
+
+    guide:
+      pattern: ^/guide
+      provider: guide_provider
+      form_login:
+        login_path: guide_login
+        check_path: guide_login
+        default_target_path: guide_dashboard
+        username_parameter: email
+        password_parameter: password
+      logout:
+        path: guide_logout
+        target: guide_login
+      remember_me:
+        secret: "%kernel.secret%"
+        lifetime: 604800
+        path: /guide
+      entry_point: App\Security\GuideAuthenticator
+
     main:
       lazy: true
       provider: app_user_provider
@@ -38,9 +61,12 @@ security:
 
   # Easy way to control access for large sections of your site
   # Note: Only the *first* access control that matches will be used
+
   access_control:
-    - { path: ^/admin, roles: ROLE_ADMIN }
-    - { path: ^/profile, roles: ROLE_USER | ROLE_ADMIN }
+    - { path: ^/admin, roles: [ROLE_USER, ROLE_ADMIN] }
+    - { path: ^/profile, roles: [ROLE_USER, ROLE_ADMIN] }
+    - { path: ^/guide/login, roles: PUBLIC_ACCESS }
+    - { path: ^/guide, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
   security:

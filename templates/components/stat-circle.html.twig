@@ -1,0 +1,11 @@
+<div class="skill-item mx-auto animated" data-skill="{{ name }}" data-percent="{{ percent }}">
+    <svg class="skill-circle" width="140" height="140">
+        <circle class="bg" cx="70" cy="70" r="60"></circle>
+        <circle class="progress" cx="70" cy="70" r="60"></circle>
+    </svg>
+    <div class="skill-text">
+        <div class="skill-percent">0%</div>
+        <div class="skill-name">{{ name }}</div>
+        {% if value is defined %}<div class="stat-value">{{ value }}</div>{% endif %}
+    </div>
+</div> 

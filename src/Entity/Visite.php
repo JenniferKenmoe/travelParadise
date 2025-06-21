@@ -207,7 +207,7 @@ class Visite
     public function getStatus(): ?string
     {
         // Calcul automatique du statut si non défini
-        if ($this->status !== null) {
+        if ($this->status !== null && in_array($this->status, ['not_scheduled', 'en_cours', 'terminee'])) {
             return $this->status;
         }
         $now = new \DateTimeImmutable();
