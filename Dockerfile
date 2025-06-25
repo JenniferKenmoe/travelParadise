@@ -15,7 +15,7 @@ WORKDIR /app
 COPY . .
 
 # Installe les dépendances PHP
-RUN composer install --no-interaction --no-dev --optimize-autoloader
+RUN composer install --no-interaction --no-dev --optimize-autoloader --no-scripts
 
 # Port exposé
 EXPOSE 10000
