@@ -45,10 +45,6 @@ class Visite
     #[ORM\ManyToOne(targetEntity: Guide::class)]
     private ?Guide $assignedGuide = null;
 
-    // #[ORM\ManyToMany(targetEntity: Visitor::class)]
-    // #[ORM\JoinTable(name: "visite_visitors")]
-    // private Collection $visitors;
-
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $visitComment = null;
 
@@ -57,6 +53,9 @@ class Visite
 
     #[ORM\Column(type: 'string', length: 20, options: ['default' => 'not_scheduled'])]
     private ?string $status = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $updatedAt = null;
 
     public function __construct()
     {
@@ -87,6 +86,9 @@ class Visite
     public function setImageFile(?File $imageFile): self
     {
         $this->imageFile = $imageFile;
+        if (null !== $imageFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
         return $this;
     }
 
@@ -132,7 +134,6 @@ class Visite
     {
         $this->startTime = $startTime;
 
-        // Recalcule endTime si la durée est déjà définie
         if ($this->duration !== null) {
             $start = new \DateTime($startTime->format('H:i:s'));
             $interval = new \DateInterval('PT' . (int)$this->duration . 'H');
@@ -204,26 +205,32 @@ class Visite
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): string
     {
-        // Calcul automatique du statut si non défini
-        if ($this->status !== null && in_array($this->status, ['not_scheduled', 'en_cours', 'terminee'])) {
+        $now = new \DateTimeImmutable();
+        $visitDate = $this->getVisitDate();
+        $startTime = $this->getStartTime();
+        $endTime = $this->getEndTime();
+
+        if (!$visitDate || !$startTime || !$endTime) {
+            return 'inconnu';
+        }
+
+        if ($this->status) {
             return $this->status;
         }
-        $now = new \DateTimeImmutable();
-        if ($this->visitDate && $this->startTime && $this->endTime) {
-            $visitDate = $this->visitDate->format('Y-m-d');
-            $start = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $visitDate . ' ' . $this->startTime->format('H:i:s'));
-            $end = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $visitDate . ' ' . $this->endTime->format('H:i:s'));
-            if ($now < $start) {
-                return 'not_scheduled';
-            } elseif ($now >= $start && $now <= $end) {
-                return 'en_cours';
-            } else {
-                return 'terminee';
-            }
+
+        $visitDateStr = $visitDate->format('Y-m-d');
+        $start = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $visitDateStr . ' ' . $startTime->format('H:i:s'));
+        $end = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $visitDateStr . ' ' . $endTime->format('H:i:s'));
+
+        if ($now < $start) {
+            return 'a_venir';
+        } elseif ($now >= $start && $now <= $end) {
+            return 'en_cours';
+        } else {
+            return 'terminee';
         }
-        return 'not_scheduled';
     }
 
     public function setStatus(?string $status): self
@@ -289,5 +296,16 @@ class Visite
     {
         // Adapte selon les champs pertinents pour identifier une visite
         return $this->getPlaceToVisit() . ' - ' . ($this->getVisitDate()?->format('Y-m-d') ?? '');
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
     }
 }

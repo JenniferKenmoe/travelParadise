@@ -26,16 +26,16 @@
                     {% for visite in upcoming %}
                         <li class="list-group-item mb-2 shadow-sm rounded d-flex justify-content-between">
                             <div class="d-flex">
-                                <img src="{% if visite.photoUrl is not null %}{{ asset('uploads/visites/' ~ visite.photoUrl) }}{% else %}{{ asset('assets/img/hero-img.jpg') }}{% endif %}" alt="visite" class="me-3" style="width: 150px; height: 150px; object-fit: cover;">
+                                <img src="{% if visite.photoUrl is not null %}{{ asset('uploads/visites/' ~ visite.photoUrl) }}{% else %}{{ asset('assets/img/hero-img.jpg') }}{% endif %}" alt="visite" class="me-3" style="max-width: 120px; height: 120px; object-fit: cover;">
                                 <div>
                                     <span class="fw-bold">{{ visite.placeToVisit }} ({{ visite.country }})</span>
-                                    <p class="text-muted">Heure : {{ visite.startTime|date('H:i') }} - {{ visite.endTime|date('H:i') }}</p>
+                                    <p class="text-muted"> {{ visite.startTime|date('H:i') }} - {{ visite.endTime|date('H:i') }}</p>
                                     <p class="text-muted">Visiteurs : {{ visite.getVisitorCount() }}</p>
                                 </div>
                             </div>
                             <div class="d-flex flex-column justify-content-between">
                                 <span>{{ visite.visitDate|date('d/m/Y') }}</span>
-                                    <a href="{{ path('guide_visite_detail', {'id': visite.id}) }}" class="btn btn-outline-primary btn-sm">Détail</a>
+                                    <a href="{{ path('guide_visite_detail', {'id': visite.id, 'status': 'upcoming'}) }}" class="btn btn-outline-primary btn-sm">Détail</a>
                             </div>
                         </li>
                     {% endfor %}
@@ -50,16 +50,16 @@
                     {% for visite in ongoing %}
                         <li class="list-group-item mb-2 shadow-sm rounded d-flex justify-content-between">
                             <div class="d-flex">
-                                <img src="{% if visite.photoUrl is not null %}{{ asset('uploads/visites/' ~ visite.photoUrl) }}{% else %}{{ asset('assets/img/hero-img.jpg') }}{% endif %}" alt="visite" class="me-3" style="width: 150px; height: 150px; object-fit: cover;">
+                                <img src="{% if visite.photoUrl is not null %}{{ asset('uploads/visites/' ~ visite.photoUrl) }}{% else %}{{ asset('assets/img/hero-img.jpg') }}{% endif %}" alt="visite" class="me-3" style="width: 120px; height: 120px; object-fit: cover;">
                                 <div>
                                     <span class="fw-bold">{{ visite.placeToVisit }} ({{ visite.country }})</span>
-                                    <p class="text-muted">Heure : {{ visite.startTime|date('H:i') }} - {{ visite.endTime|date('H:i') }}</p>
+                                    <p class="text-muted"> {{ visite.startTime|date('H:i') }} - {{ visite.endTime|date('H:i') }}</p>
                                     <p class="text-muted">Visiteurs : {{ visite.getVisitorCount() }}</p>
                                 </div>
                             </div>
                             <div class="d-flex flex-column justify-content-between">
                                 <span>{{ visite.visitDate|date('d/m/Y') }}</span>
-                                <a href="{{ path('guide_visite_detail', {'id': visite.id}) }}" class="btn btn-success btn-sm">Feuille de présence</a>
+                                <a href="{{ path('guide_visite_detail', {'id': visite.id, 'status': 'ongoing'}) }}" class="btn btn-success btn-sm">Feuille de présence</a>
                             </div>
                         </li>
                     {% endfor %}
@@ -74,16 +74,16 @@
                     {% for visite in past %}
                         <li class="list-group-item mb-2 shadow-sm rounded d-flex justify-content-between">
                             <div class="d-flex">
-                                <img src="{% if visite.photoUrl is not null %}{{ asset('uploads/visites/' ~ visite.photoUrl) }}{% else %}{{ asset('assets/img/hero-img.jpg') }}{% endif %}" alt="visite" class="me-3" style="width: 150px; height: 150px; object-fit: cover;">
+                                <img src="{% if visite.photoUrl is not null %}{{ asset('uploads/visites/' ~ visite.photoUrl) }}{% else %}{{ asset('assets/img/hero-img.jpg') }}{% endif %}" alt="visite" class="me-3" style="width: 120px; height: 120px; object-fit: cover;">
                                 <div>
                                     <span class="fw-bold">{{ visite.placeToVisit }} ({{ visite.country }})</span>
-                                    <p class="text-muted">Heure : {{ visite.startTime|date('H:i') }} - {{ visite.endTime|date('H:i') }}</p>
+                                    <p class="text-muted"> {{ visite.startTime|date('H:i') }} - {{ visite.endTime|date('H:i') }}</p>
                                     <p class="text-muted">Visiteurs : {{ visite.getVisitorCount() }}</p>
                                 </div>
                             </div>
                             <div class="d-flex flex-column justify-content-between">
                                 <span>{{ visite.visitDate|date('d/m/Y') }}</span>
-                                    <a href="{{ path('guide_visite_detail', {'id': visite.id}) }}" class="btn btn-outline-primary btn-sm">Détail</a>
+                                    <a href="{{ path('guide_visite_detail', {'id': visite.id, 'status': 'past'}) }}" class="btn btn-outline-primary btn-sm">Détail</a>
                             </div>
                         </li>
                     {% endfor %}
@@ -92,23 +92,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        alertify.set('notifier','position', 'top-center');
-        alertify.set('notifier','delay', 12);
-        alertify.defaults.theme.ok = 'btn btn-success';
-        alertify.defaults.theme.cancel = 'btn btn-danger';
-        alertify.defaults.theme.input = 'form-control';
-        {% for message in app.flashes('success') %}
-            alertify.success('<i class="fa fa-check-circle me-2"></i>' + {{ message|json_encode|raw }}, 12, null, true);
-        {% endfor %}
-        {% for message in app.flashes('danger') %}
-            alertify.error('<i class="fa fa-exclamation-triangle me-2"></i>' + {{ message|json_encode|raw }}, 12, null, true);
-        {% endfor %}
-    });
-    </script>
 {% endblock %}

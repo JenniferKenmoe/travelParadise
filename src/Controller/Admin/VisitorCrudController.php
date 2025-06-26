@@ -18,11 +18,10 @@ class VisitorCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id', 'ID')->onlyOnIndex(),
             TextField::new('lastName', 'Nom'),
             TextField::new('firstName', 'Prénom'),
             EmailField::new('email', 'Email'),
-            TextField::new('identityNumber', 'Numéro d\'identité'),
+            TextField::new('identityNumber', 'Numéro'),
         ];
     }
 }

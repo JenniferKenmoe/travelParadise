@@ -17,8 +17,7 @@ class CountryCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id', 'ID')->onlyOnIndex(),
-            TextField::new('code', 'Code tel'),
+            TextField::new('code', 'Code du pays'),
             TextField::new('name', 'Nom du pays'),
         ];
     }

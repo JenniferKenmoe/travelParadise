@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Visite;
+use App\Form\VisitorParticipationType;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -16,6 +17,7 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Doctrine\ORM\EntityManagerInterface;
 
 class VisiteCrudController extends AbstractCrudController
 {
@@ -30,11 +32,15 @@ class VisiteCrudController extends AbstractCrudController
             TextareaField::new('imageFile', 'Photo')
                 ->setFormType(VichImageType::class)
                 ->onlyOnForms(),
+                
             ImageField::new('photoUrl', 'Image')
                 ->setBasePath('/uploads/visites')
                 ->onlyOnIndex(),
 
             AssociationField::new('country', 'Pays'),
+
+            AssociationField::new('assignedGuide', 'Nom du guide'),
+
             TextField::new('placeToVisit', 'Lieu'),
             DateField::new('visitDate', 'Date'),
             TimeField::new('startTime', 'Heure de début'),
@@ -44,12 +50,10 @@ class VisiteCrudController extends AbstractCrudController
             TimeField::new('endTime', 'Heure de fin')
                 ->setFormTypeOption('disabled', true),
 
-            AssociationField::new('assignedGuide', 'Nom du guide'),
-
             // Affichage du statut avec couleur
             TextField::new('statusLabel', 'Statut')
                 ->formatValue(function ($value, $entity) {
-                    if ($entity instanceof \App\Entity\Visite) {
+                    if ($entity instanceof Visite) {
                         $status = $entity->getStatusLabel();
                         $color = match ($entity->getStatus()) {
                             'en_cours' => 'green',
@@ -62,15 +66,12 @@ class VisiteCrudController extends AbstractCrudController
                 })
                 ->onlyOnIndex(),
 
-            // TextField::new('visitorsList', 'Visiteurs')
-            //     ->onlyOnIndex(),
-
             IntegerField::new('visitorCount', 'Visiteurs')
                 ->formatValue(function ($value, $entity) {
-                    if ($entity instanceof \App\Entity\Visite) {
+                    if ($entity instanceof Visite) {
                         $id = $entity->getId();
                         return sprintf(
-                            '<a href="/admin?crudAction=index&crudControllerFqcn=App%%5CController%%5CAdmin%%5CVisitorParticipationCrudController&filters[visite][value]=%d">%d</a>',
+                            '<b href="%d">%d</b>',
                             $id,
                             $entity->getVisitorCount()
                         );
@@ -81,17 +82,21 @@ class VisiteCrudController extends AbstractCrudController
 
             // Formulaire d’édition/création
             CollectionField::new('visitorParticipations', 'Liste des visiteurs')
-                ->setEntryType(\App\Form\VisitorParticipationType::class)
+                ->setEntryType(VisitorParticipationType::class)
                 ->setFormTypeOptions([
                     'by_reference' => false,
                     'entry_options' => [
-                        'display_comment' => $pageName !== 'new',
+                        'display_comment' => $pageName !== 'new'
                     ],
                 ])
                 ->onlyOnForms(),
 
-            // Visit comment
             TextareaField::new('visitComment', 'Commentaire sur la visite')->hideOnIndex(),
         ];
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        parent::updateEntity($entityManager, $entityInstance);
     }
 }

@@ -15,6 +15,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\Visite;
 use App\Entity\Country;
+use App\Entity\Guide;
 
 final class GuideController extends AbstractController
 {
@@ -29,6 +30,9 @@ final class GuideController extends AbstractController
     #[Route('/guide/login', name: 'guide_login')]
     public function login(Request $request, AuthenticationUtils $authenticationUtils): Response
     {
+        if ($this->getUser() instanceof Guide) {
+            return $this->redirectToRoute('guide_dashboard');
+        }
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
         return $this->render('guide/login.html.twig', [
@@ -62,12 +66,16 @@ final class GuideController extends AbstractController
 
         // Statistiques par mois
         $statsMois = $visiteRepository->countByMonthForGuide($user);
+
         // Statistiques par pays
         $statsPays = $visiteRepository->countByCountryForGuide($user);
+
         // Taux de présence par mois
         $tauxPresenceMois = $participationRepository->presenceRateByMonthForGuide($user);
+        
         // Alias pour compatibilité template
         $visitesParMois = $statsMois;
+        
         // Nombre de visiteurs par visite (pour le guide)
         $parVisite = $visiteRepository->countByVisiteForGuide($user);
 
@@ -86,9 +94,9 @@ final class GuideController extends AbstractController
     #[Route('/guide/visites', name: 'guide_visites')]
     public function visites(VisiteRepository $visiteRepository, UserInterface $user): Response
     {
-        $upcoming = $visiteRepository->findUpcomingByGuide($user);
-        $ongoing = $visiteRepository->findOngoingByGuide($user);
-        $past = $visiteRepository->findPastByGuide($user);
+        $upcoming = $visiteRepository->findByGuideAndStatus($user, 'a_venir');
+        $ongoing = $visiteRepository->findByGuideAndStatus($user, 'en_cours');
+        $past = $visiteRepository->findByGuideAndStatus($user, 'terminee');
         return $this->render('guide/visites.html.twig', [
             'upcoming' => $upcoming,
             'ongoing' => $ongoing,
@@ -102,13 +110,11 @@ final class GuideController extends AbstractController
         Request $request,
         EntityManagerInterface $em
     ): Response {
-        $now = new \DateTimeImmutable();
-        $isOngoing = $visite->getVisitDate() && $visite->getVisitDate()->format('Y-m-d') === $now->format('Y-m-d')
-            && $visite->getStartTime() <= $now && $visite->getEndTime() >= $now;
+        $status = $visite->getStatus();
 
-        if ($isOngoing && $request->isMethod('POST')) {
+        if ($status === 'en_cours' && $request->isMethod('POST')) {
             if ($request->request->has('finish_visit')) {
-                $visite->setStatus('finished');
+                $visite->setStatus('terminee');
                 $em->flush();
                 $this->addFlash('success', 'La visite a été marquée comme terminée.');
                 return $this->redirectToRoute('guide_visite_detail', ['id' => $visite->getId()]);
@@ -142,7 +148,7 @@ final class GuideController extends AbstractController
 
         return $this->render('guide/visite_detail.html.twig', [
             'visite' => $visite,
-            'isOngoing' => $isOngoing,
+            'status' => $status,
             'tauxPresence' => $tauxPresence,
             'tauxAbsence' => $tauxAbsence,
             'present' => $present,

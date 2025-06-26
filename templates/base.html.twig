@@ -57,16 +57,20 @@
                     });
                 }, { threshold: 0.5 });
                 skills.forEach(skill => observer.observe(skill));
-
-                // AlertifyJS notifications pour les flashs Symfony
-                // Désactivé ici pour éviter la double notification sur la page profil
-                {#
+                {% set alertify_delay = alertify_delay is defined ? alertify_delay : 12 %}
                 {% for type, messages in app.flashes %}
                     {% for message in messages %}
-                        alertify.notify({{ message|json_encode|raw }}, '{{ type == 'danger' ? 'error' : type }}', 5);
+                        {% if type == 'success' %}
+                            alertify.success('<i class="fa fa-check-circle me-2"></i>' + {{ message|json_encode|raw }}, {{ alertify_delay }}, null, true);
+                        {% elseif type == 'danger' %}
+                            alertify.error('<i class="fa fa-exclamation-triangle me-2"></i>' + {{ message|json_encode|raw }}, {{ alertify_delay }}, null, true);
+                        {% elseif type == 'warning' %}
+                            alertify.warning('<i class="fa fa-exclamation-circle me-2"></i>' + {{ message|json_encode|raw }}, {{ alertify_delay }}, null, true);
+                        {% else %}
+                            alertify.message('<i class="fa fa-info-circle me-2"></i>' + {{ message|json_encode|raw }}, {{ alertify_delay }}, null, true);
+                        {% endif %}
                     {% endfor %}
                 {% endfor %}
-                #}
             });
             </script>
         {% endblock %}
@@ -74,47 +78,45 @@
     <body class="bg-light">
         <nav class="navbar navbar-expand-lg bg-{{ app.user and app.request.getPathInfo() starts with '/guide' ? 'white' : 'light' }} fixed-top" style="z-index:1030;">
             <div class="container">
-                <a class="navbar-brand d-flex align-items-center" href="/">
-                    <img src="{{ asset('assets/img/logo.PNG') }}" alt="Logo TravelParadise" class="me-2">
-                    <span class="fw-bold text-primary">TravelParadise</span>
-                </a>
-                <button
-                    class="navbar-toggler"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav"
-                >
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="{{ asset('assets/img/logo.PNG') }}" alt="Logo TravelParadise" class="me-2">
+                <span class="fw-bold text-primary">TravelParadise</span>
+            </a>
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-                {% if app.user and app.request.getPathInfo() starts with '/guide' %}
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link {% if app.request.get('_route') == 'guide_dashboard' %}text-primary{% endif %}" href="{{ path('guide_dashboard') }}">Accueil</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if app.request.get('_route') == 'guide_visites' %}text-primary{% endif %}" href="{{ path('guide_visites') }}">Mes visites</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if app.request.get('_route') == 'guide_stats' %}text-primary{% endif %}" href="{{ path('guide_stats') }}">Statistiques</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if app.request.get('_route') == 'guide_profile' %}text-primary{% endif %}" href="{{ path('guide_profile') }}">Mon profil</a>
-                        </li>
-                    </ul>
-                    <div class="d-flex justify-content-center">
-                        <a class="btn btn-outline-danger btn-sm" href="{{ path('app_logout') }}"> Déconnexion</a>
-                    </div>
+            {% if app.user and app.request.getPathInfo() starts with '/guide' %}
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link {% if app.request.get('_route') == 'guide_dashboard' %}text-primary{% endif %}" href="{{ path('guide_dashboard') }}">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if app.request.get('_route') == 'guide_visites' %}text-primary{% endif %}" href="{{ path('guide_visites') }}">Mes visites</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if app.request.get('_route') == 'guide_stats' %}text-primary{% endif %}" href="{{ path('guide_stats') }}">Statistiques</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if app.request.get('_route') == 'guide_profile' %}text-primary{% endif %}" href="{{ path('guide_profile') }}">Mon profil</a>
+                </li>
+                </ul>
+                <div class="d-flex justify-content-center">
+                <a class="btn btn-outline-danger btn-sm" href="{{ path('app_logout') }}"> Déconnexion</a>
                 </div>
+            </div>
             {% endif %}
         </nav>
-        
+
+        <div style="height: 40px;"></div>
         
         {% block body %}{% endblock %}
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
-        <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
-
         
         <footer class="footer text-center">
             <div class="container">
@@ -123,4 +125,7 @@
             </div>
         </footer>
     </body>
+    
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
 </html>

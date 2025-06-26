@@ -5,27 +5,42 @@
 {% block body %}
 <div class="container py-4 mt-4">
     <a href="{{ path('guide_visites') }}" class="btn btn-link mb-3 mt-4">&larr; Retour à mes visites</a>
-    
-    <div class="skills-container mb-3">
-        <div class="row justify-content-center">
-            <div class="col-md-4 mb-4">
-                {% include 'components/stat-circle.html.twig' with {
-                    name: 'Présents',
-                    percent: tauxPresence,
-                    value: present ~ ' / ' ~ total,
-                    color: '#38b2ac'
-                } %}
-            </div>
-            <div class="col-md-4 mb-4">
-                {% include 'components/stat-circle.html.twig' with {
-                    name: 'Absents',
-                    percent: tauxAbsence,
-                    value: absent ~ ' / ' ~ total,
-                    color: '#e53e3e'
-                } %}
+
+    {# Affichage du statut de la visite #}
+    <div class="mb-3">
+        {% if status == 'en_cours' %}
+            <span class="badge bg-success fs-6">Statut : En cours</span>
+        {% elseif status == 'a_venir' %}
+            <span class="badge bg-warning text-dark fs-6">Statut : À venir</span>
+        {% elseif status == 'terminee' %}
+            <span class="badge bg-secondary fs-6">Statut : Terminée</span>
+        {% else %}
+            <span class="badge bg-dark fs-6">Statut : Inconnu</span>
+        {% endif %}
+    </div>
+
+    {% if status == 'terminee' %}
+        <div class="skills-container mb-3">
+            <div class="row justify-content-center">
+                <div class="col-md-4 mb-4">
+                    {% include 'components/stat-circle.html.twig' with {
+                        name: 'Présents',
+                        percent: tauxPresence,
+                        value: present ~ ' / ' ~ total,
+                        color: '#38b2ac'
+                    } %}
+                </div>
+                <div class="col-md-4 mb-4">
+                    {% include 'components/stat-circle.html.twig' with {
+                        name: 'Absents',
+                        percent: tauxAbsence,
+                        value: absent ~ ' / ' ~ total,
+                        color: '#e53e3e'
+                    } %}
+                </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 
     <div class="card shadow p-4">
         <h2 class="mb-3" style="color: #2b6cb0;">{{ visite.placeToVisit }} ({{ visite.country }})</h2>
@@ -34,10 +49,7 @@
             <li><strong>Heure :</strong> {{ visite.startTime|date('H:i') }} - {{ visite.endTime|date('H:i') }}</li>
             <li><strong>Durée :</strong> {{ visite.duration }} h</li>
         </ul>
-        {% if isOngoing %}
-            {% for message in app.flashes('success') %}
-                <div class="alert alert-success">{{ message }}</div>
-            {% endfor %}
+        {% if status == 'en_cours' %}
             <form method="post">
                 <h4 class="mt-4 mb-2">Feuille de présence</h4>
                 <ul class="list-group mb-3">
@@ -46,7 +58,6 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <strong>{{ participation.visitor.firstName }} {{ participation.visitor.lastName }}</strong>
-                                    <span class="ms-2">({{ participation.visitor.email }})</span>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="present_{{ participation.id }}" name="present_{{ participation.id }}" {% if participation.present %}checked{% endif %}>
@@ -76,7 +87,6 @@
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div>
                             <strong>{{ participation.visitor.firstName }} {{ participation.visitor.lastName }}</strong>
-                            <span class="ms-2">({{ participation.visitor.email }})</span>
                             <br>
                             Présent : <span class="fw-bold">{{ participation.present ? 'Oui' : 'Non' }}</span>
                             <br>
@@ -93,23 +103,4 @@
         {% endif %}
     </div>
 </div>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        alertify.set('notifier','position', 'top-center');
-        alertify.set('notifier','delay', 12);
-        alertify.defaults.theme.ok = 'btn btn-success';
-        alertify.defaults.theme.cancel = 'btn btn-danger';
-        alertify.defaults.theme.input = 'form-control';
-        {% for message in app.flashes('success') %}
-            alertify.success('<i class="fa fa-check-circle me-2"></i>' + {{ message|json_encode|raw }}, 12, null, true);
-        {% endfor %}
-        {% for message in app.flashes('danger') %}
-            alertify.error('<i class="fa fa-exclamation-triangle me-2"></i>' + {{ message|json_encode|raw }}, 12, null, true);
-        {% endfor %}
-    });
-    </script>
 {% endblock %}
